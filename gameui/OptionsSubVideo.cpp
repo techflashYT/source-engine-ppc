@@ -30,6 +30,10 @@
 #include "sourcevr/isourcevirtualreality.h"
 
 #if defined( USE_SDL )
+#ifdef __powerpc
+#define SDL_DISABLE_IMMINTRIN_H
+#endif
+
 #include "SDL.h"
 #endif
 

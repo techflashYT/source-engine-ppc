@@ -14,6 +14,10 @@
 
 #if defined( USE_SDL )
 #undef M_PI
+#ifdef __powerpc
+#define SDL_DISABLE_IMMINTRIN_H
+#endif
+
 #include "SDL.h"
 static void initKeymap(void);
 #endif

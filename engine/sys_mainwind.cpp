@@ -5,6 +5,10 @@
 //===========================================================================//
 #if defined( USE_SDL )
 #undef PROTECTED_THINGS_ENABLE
+#ifdef __powerpc
+#define SDL_DISABLE_IMMINTRIN_H
+#endif
+
 #include "SDL.h"
 #include "SDL_syswm.h"
 

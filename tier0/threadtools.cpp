@@ -101,6 +101,29 @@ static volatile bool s_bThreadIDAllocated[MAX_THREAD_IDS];
 #endif 
 
 
+
+// XXX: PPC Hack - Stub implementation, since there's nothing usable for PPC
+// Global lock for atomic emulation
+#include <pthread.h> // For mutex
+
+static pthread_mutex_t atomic_lock = PTHREAD_MUTEX_INITIALIZER;
+
+extern "C" {
+	bool ___sync_bool_compare_and_swap(uint64_t *ptr, uint64_t oldval, uint64_t newval) {
+		bool result;
+		pthread_mutex_lock(&atomic_lock);
+		if (*ptr == oldval) {
+			*ptr = newval;
+			result = true;
+		} else {
+			result = false;
+		}
+		pthread_mutex_unlock(&atomic_lock);
+		return result;
+	}
+}
+#define __sync_bool_compare_and_swap ___sync_bool_compare_and_swap
+
 static CThreadFastMutex s_ThreadIDMutex;
 
 PLATFORM_INTERFACE void AllocateThreadID( void )
@@ -1853,7 +1876,7 @@ bool ThreadInterlockedAssignIf128( volatile int128 *pDest, const int128 &value, 
 }
 #endif
 
-#elif defined(GNUC)
+#elif defined(GNUC) && !defined(__powerpc)
 
 #ifdef OSX
 #include <libkern/OSAtomic.h>
@@ -1931,8 +1954,9 @@ bool ThreadInterlockedAssignIf64( int64 volatile * pDest, int64 value, int64 com
 
 #else
 // This will perform horribly,
-#error "Falling back to mutexed interlocked operations, you really don't have intrinsics you can use?"ß
+//#error "Falling back to mutexed interlocked operations, you really don't have intrinsics you can use?"ß
 CThreadMutex g_InterlockedMutex;
+
 
 long ThreadInterlockedIncrement( long volatile *pDest )
 {
@@ -1998,6 +2022,12 @@ int64 ThreadInterlockedCompareExchange64( int64 volatile *pDest, int64 value, in
 		*pDest = value;
 	return retVal;
 }
+
+bool ThreadInterlockedAssignIf64( int64 volatile * pDest, int64 value, int64 comperand )
+{
+	return __sync_bool_compare_and_swap( pDest, comperand, value );
+}
+
 
 #endif
 

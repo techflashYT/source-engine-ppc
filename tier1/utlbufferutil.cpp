@@ -12,7 +12,9 @@
 #include "tier1/utlbuffer.h"
 #include "mathlib/vector.h"
 #include "mathlib/vector2d.h"
+#ifndef __powerpc
 #include "mathlib/vector4d.h"
+#endif
 #include "mathlib/vmatrix.h"
 #include "Color.h"
 #include <stdio.h>

@@ -494,8 +494,10 @@ CSysModule *Sys_LoadModule( const char *pModuleName )
 #endif // _WIN32
 		}
 #endif // DEBUG
+		Msg( "point a hDLL is: %p, error: %s\n", hDLL, dlerror() );
 	}
 
+	Msg( "point b hDLL is: %p, error: %s\n", hDLL, dlerror() );
 	// If running in the debugger, assume debug binaries are okay, otherwise they must run with -allowdebug
 	if ( !IsGameConsole() && Sys_GetProcAddress( hDLL, "BuiltDebug" ) )
 	{

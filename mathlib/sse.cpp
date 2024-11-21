@@ -13,6 +13,10 @@
 #include "mathlib/vector.h"
 #if defined(__arm__) || defined(__aarch64__)
 #include "sse2neon.h"
+#elif defined(__x86_64) || defined(__i386)
+// don't need to do anything
+#else
+#include "simdEmulation.h"
 #endif
 
 #include "sse.h"
@@ -180,7 +184,7 @@ float _SSE_RSqrtFast(float x)
 	Assert( s_bMathlibInitialized );
 
 	float rroot;
-#if defined(__arm__) || defined(__aarch64__)
+#if defined(__arm__) || defined(__aarch64__) || defined(__powerpc)
         rroot = _SSE_RSqrtAccurate(x);
 #elif _WIN32
 	_asm
@@ -217,7 +221,7 @@ float FASTCALL _SSE_VectorNormalize (Vector& vec)
 	// be much of a performance win, considering you will very likely miss 3 branch predicts in a row.
 	if ( v[0] || v[1] || v[2] )
 	{
-#if defined(__arm__) || defined(__aarch64__)
+#if defined(__arm__) || defined(__aarch64__) || defined(__powerpc)
 		float rsqrt = _SSE_RSqrtAccurate( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] );
 		r[0] = v[0] * rsqrt;
 		r[1] = v[1] * rsqrt;
@@ -296,7 +300,7 @@ void FASTCALL _SSE_VectorNormalizeFast (Vector& vec)
 float _SSE_InvRSquared(const float* v)
 {
 	float	inv_r2 = 1.f;
-#if defined(__arm__) || defined(__aarch64__)
+#if defined(__arm__) || defined(__aarch64__) || defined(__powerpc)
 	return _SSE_RSqrtAccurate( FLT_EPSILON + v[0] * v[0] + v[1] * v[1] + v[2] * v[2] );
 #elif _WIN32
 	_asm { // Intel SSE only routine

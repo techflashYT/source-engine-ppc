@@ -419,7 +419,7 @@ PLATFORM_INTERFACE bool ThreadInterlockedAssignIf( int32 volatile *, int32 value
 #endif
 
 
-#if defined( USE_INTRINSIC_INTERLOCKED ) && !defined( PLATFORM_64BITS )
+#if defined( USE_INTRINSIC_INTERLOCKED ) && !defined( PLATFORM_64BITS ) && !defined ( __powerpc )
 #define TIPTR()
 inline void *ThreadInterlockedExchangePointer( void * volatile *p, void *value )							{ return (void *)( ( intp )ThreadInterlockedExchange( reinterpret_cast<intp volatile *>(p), reinterpret_cast<intp>(value) ) ); }
 inline void *ThreadInterlockedCompareExchangePointer( void * volatile *p, void *value, void *comperand )	{ return (void *)( ( intp )ThreadInterlockedCompareExchange( reinterpret_cast<intp volatile *>(p), reinterpret_cast<intp>(value), reinterpret_cast<intp>(comperand) ) ); }

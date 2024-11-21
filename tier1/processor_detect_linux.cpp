@@ -20,6 +20,7 @@ bool CheckSSE2Technology(void) { return false; }
 bool Check3DNowTechnology(void) { return false; }
 #else
 
+#if defined(__i386) || defined(__x86_64)
 static void cpuid(uint32 function, uint32& out_eax, uint32& out_ebx, uint32& out_ecx, uint32& out_edx)
 {
 #if defined(PLATFORM_64BITS)
@@ -81,5 +82,6 @@ bool Check3DNowTechnology(void)
     }
     return false;
 }
+#endif
 
 #endif

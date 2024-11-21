@@ -27,6 +27,9 @@
 
 // We lazily load the SDL shared object, and only reference functions if it's
 // available, so this can be included on the dedicated server too.
+#if !defined (__i386) && !defined(__x86_64)
+#define SDL_DISABLE_IMMINTRIN_H
+#endif
 #include "SDL.h"
 
 typedef int ( SDLCALL FUNC_SDL_ShowMessageBox )( const SDL_MessageBoxData *messageboxdata, int *buttonid );

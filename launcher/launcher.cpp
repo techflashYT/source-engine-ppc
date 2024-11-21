@@ -67,6 +67,10 @@
 #endif
 
 #if defined( USE_SDL )
+#ifdef __powerpc
+#define SDL_DISABLE_IMMINTRIN_H
+#endif
+
 #include <SDL.h>
 #include <SDL_version.h>
 

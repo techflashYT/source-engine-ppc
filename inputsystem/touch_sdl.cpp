@@ -8,6 +8,10 @@
 #include "inputsystem.h"
 #include "tier1/convar.h"
 #include "tier0/icommandline.h"
+#ifdef __powerpc
+#define SDL_DISABLE_IMMINTRIN_H
+#endif
+
 #include "SDL.h"
 #include "SDL_touch.h"
 // NOTE: This has to be the last file included!

@@ -19,6 +19,9 @@
 #define _STDINT_H_ 1
 #endif
 
+#ifdef __powerpc
+#define SDL_DISABLE_IMMINTRIN_H
+#endif
 #include "SDL.h"
 
 // memdbgon must be the last include file in a .cpp file!!!

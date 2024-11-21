@@ -852,7 +852,7 @@ static FORCEINLINE double fsel(double fComparand, double fValGE, double fLT)
 //-----------------------------------------------------------------------------
 //#define CHECK_FLOAT_EXCEPTIONS		1
 
-#if !defined( _X360 )
+#if !defined( _X360 ) || !defined( __powerpc )
 #if defined( _MSC_VER )
 
 	#if defined( PLATFORM_WINDOWS_PC64 )
@@ -898,7 +898,7 @@ static FORCEINLINE double fsel(double fComparand, double fValGE, double fLT)
 
 		#endif
 	#endif
-#elif defined (__arm__) || defined (__aarch64__)
+#elif defined (__arm__) || defined (__aarch64__) || defined( __powerpc )
 	inline void SetupFPUControlWord() {}
 #else
 	inline void SetupFPUControlWord()
@@ -1235,11 +1235,7 @@ PLATFORM_INTERFACE struct tm *		Plat_localtime( const time_t *timep, struct tm *
 
 inline uint64 Plat_Rdtsc()
 {
-#if (defined( __arm__ ) || defined( __aarch64__ )) && defined (POSIX)
-	struct timespec t;
-	clock_gettime( CLOCK_REALTIME, &t);
-	return t.tv_sec * 1000000000ULL + t.tv_nsec;
-#elif defined( _X360 )
+#if defined( _X360 )
 	return ( uint64 )__mftb32();
 #elif defined( _WIN64 )
 	return ( uint64 )__rdtsc();
@@ -1258,6 +1254,10 @@ inline uint64 Plat_Rdtsc()
 	uint32 lo, hi;
 	__asm__ __volatile__ ( "rdtsc" : "=a" (lo), "=d" (hi));
 	return ( ( ( uint64 )hi ) << 32 ) | lo;
+#elif defined (POSIX)
+	struct timespec t;
+	clock_gettime( CLOCK_REALTIME, &t);
+	return t.tv_sec * 1000000000ULL + t.tv_nsec;
 #else
 	#error
 #endif
